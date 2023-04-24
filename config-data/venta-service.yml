@@ -1,5 +1,11 @@
 server:
     port: 8383
+springdoc:
+  api-doc:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /doc/swagger-ui.html
 spring:
     jpa:
         hibernate.ddl-auto: update
