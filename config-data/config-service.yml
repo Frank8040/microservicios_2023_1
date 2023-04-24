@@ -1,0 +1,19 @@
+server: 
+    port: 8484
+
+spring:
+  application:
+    name: config-server
+  cloud: 
+    config:
+        server:
+            git: 
+                uri: https://github.com/Frank8040/microservicios_2023_1.git
+                search-paths: config-data
+                username: Frank8040
+                password: frankchunca.77298040
+                default-label: main
+  security:
+    user:
+        name: root
+        password: s3cr3t
