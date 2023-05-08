@@ -1,5 +1,7 @@
 package com.example.venta.entity;
 
+import com.example.venta.dto.Producto;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,6 +14,9 @@ public class VentaDetalle {
     private Double cantidad;
     private Double precio;
     private Integer productoId;
+
+    @Transient
+    private Producto producto;
 
     public VentaDetalle() {
         this.cantidad = (double) 0;
