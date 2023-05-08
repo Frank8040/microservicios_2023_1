@@ -14,12 +14,12 @@ spring:
         - id: catalogo-service
           uri: lb://catalogo-service
           predicates:
-            -Path=/categoria/**,/producto/**
+            - Path=/categoria/**,/producto/**
         - id: cliente-service
           uri: lb://cliente-service
           predicates:
-            -Path=/cliente/**
+            - Path=/cliente/**
         - id: venta-service
           uri: lb://venta-service
           predicates:
-            -Path=/venta/**
+            - Path=/venta/**
