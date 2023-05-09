@@ -15,27 +15,27 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @GetMapping()
-    public ResponseEntity<List<Cliente>> listar() {
+    public ResponseEntity<List<Cliente>> list() {
         return ResponseEntity.ok().body(clienteService.listar());
     }
 
     @PostMapping()
-    public ResponseEntity<Cliente> guardar(@RequestBody Cliente Cliente) {
+    public ResponseEntity<Cliente> save(@RequestBody Cliente Cliente) {
         return ResponseEntity.ok(clienteService.guardar(Cliente));
     }
 
     @PutMapping()
-    public ResponseEntity<Cliente> actualizar(@RequestBody Cliente Cliente) {
+    public ResponseEntity<Cliente> update(@RequestBody Cliente Cliente) {
         return ResponseEntity.ok(clienteService.actualizar(Cliente));
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarPorId(@PathVariable(required = true) Integer id) {
+    public ResponseEntity<Cliente> listById(@PathVariable(required = true) Integer id) {
         return ResponseEntity.ok(clienteService.listarPorId(id).get());
     }
 
     @DeleteMapping("/{id}")
-    public String eliminar(@PathVariable(required = true) Integer id) {
+    public String deleteById(@PathVariable(required = true) Integer id) {
         clienteService.eliminarPorId(id);
         return "Eliminación Correcta";
     }

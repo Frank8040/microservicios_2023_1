@@ -20,13 +20,13 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public Cliente guardar(Cliente Cliente) {
-        return clienteRepository.save(Cliente);
+    public Cliente guardar(Cliente cliente) {
+        return clienteRepository.save(cliente);
     }
 
     @Override
-    public Cliente actualizar(Cliente Cliente) {
-        return clienteRepository.save(Cliente);
+    public Cliente actualizar(Cliente cliente) {
+        return clienteRepository.save(cliente);
     }
 
     @Override

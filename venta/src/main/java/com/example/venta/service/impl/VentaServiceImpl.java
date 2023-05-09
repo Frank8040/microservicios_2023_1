@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VentaServiceImpl implements VentaService {
@@ -21,6 +22,9 @@ public class VentaServiceImpl implements VentaService {
 
     @Autowired
     private ClienteFeign clienteFeign;
+
+    @Autowired
+    private ProductoFeign productoFeign;
 
     @Override
     public List<Venta> listar() {
@@ -40,11 +44,20 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public Optional<Venta> listarPorId(Integer id) {
         Venta venta = ventaRepository.findById(id).get();
+
         Cliente cliente = clienteFeign.listById(venta.getClienteId()).getBody();
-        List<VentaDetalle> ventaDetalles = venta.getDetalle().stream().map(ventaDetalle) -> {
-            Producto producto = ProductoFeign.listById(ventaDetalles)
-        }
+        List<VentaDetalle> ventaDetalles = venta.getDetalle().stream().map(ventaDetalle -> {
+            System.out.println(ventaDetalle.toString());
+            System.out.println("Antes de la peticion");
+            Producto producto = productoFeign.listById(ventaDetalle.getProductoId()).getBody();
+            System.out.println("Despues de la peticion");
+            System.out.println(producto.toString());
+            System.out.println(producto.getNombre());
+            ventaDetalle.setProducto(producto);
+            return ventaDetalle;
+        }).collect(Collectors.toList());
         venta.setDetalle(ventaDetalles);
+
         venta.setCliente(cliente);
         return Optional.of(venta);
     }
