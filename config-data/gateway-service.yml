@@ -10,12 +10,6 @@ spring:
       discovery:
         locator:
           enabled: true
-      default-filters:
-        - name: Cors
-          args:
-            allowedOrigins: "*"
-            allowedMethods: "GET,POST,PUT,DELETE"
-            allowedHeaders: "*"
       routes:
         - id: catalogo-service
           uri: lb://catalogo-service
