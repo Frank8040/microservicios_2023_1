@@ -41,7 +41,7 @@ public class ClienteController {
     }
 
     // Configuración de CORS para las solicitudes DELETE
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(method = RequestMethod.OPTIONS, path = "/{id}")
     public ResponseEntity<?> options() {
         return ResponseEntity.ok().build();
