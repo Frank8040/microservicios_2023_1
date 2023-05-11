@@ -1,4 +1,5 @@
 package com.example.cliente.controller;
+
 import com.example.cliente.service.ClienteService;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ClienteController {
     public ResponseEntity<Cliente> update(@RequestBody Cliente Cliente) {
         return ResponseEntity.ok(clienteService.actualizar(Cliente));
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> listById(@PathVariable(required = true) Integer id) {
         return ResponseEntity.ok(clienteService.listarPorId(id).get());
