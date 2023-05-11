@@ -11,7 +11,6 @@ import com.example.cliente.entity.Cliente;
 
 @RestController
 @RequestMapping("/cliente")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;
@@ -42,6 +41,8 @@ public class ClienteController {
         return ResponseEntity.ok("Eliminación Correcta");
     }
 
+    // Configuración de CORS para las solicitudes DELETE
+    @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(method = RequestMethod.OPTIONS, path = "/{id}")
     public ResponseEntity<?> options() {
         return ResponseEntity.ok().build();
