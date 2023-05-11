@@ -7,6 +7,16 @@ eureka:
 spring:
   cloud:
     gateway:
+      globalcors:
+          corsConfigurations:
+            '[/**]':
+              allowedOrigins: "http://localhost:3000"
+              allowedHeaders: "*"
+              allowedMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
       discovery:
         locator:
           enabled: true
@@ -23,10 +33,3 @@ spring:
           uri: lb://venta-service
           predicates:
             - Path=/venta/**
-spring.webflux:
-  cors:
-    cors-configuration:
-      allowed-origins: "http://localhost:5173"
-      allowed-methods: GET, POST, PUT, DELETE
-      allowed-headers: "*"
-      allow-credentials: true

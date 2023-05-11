@@ -1,5 +1,5 @@
 server:
-    port: 8282
+  port: 8282
 springdoc:
   api-doc:
     enabled: true
@@ -7,26 +7,16 @@ springdoc:
     enabled: true
     path: /doc/swagger-ui.html
 spring:
-    jpa:
-        hibernate.ddl-auto: update
-        show-sql: true
-        generate-ddl: true
-    datasource:
-        driverClassName: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/cliente
-        username: root
-        password: 
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cliente
+    username: root
+    password:
 eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URI:http://localhost:8585/eureka}
-spring.web:
-  cors:
-    allowed-origins: "http://localhost:5173"
-    allowed-methods: GET, POST, PUT, DELETE
-    allowed-headers: "*"
-    allow-credentials: true
-        
-    
-
-
