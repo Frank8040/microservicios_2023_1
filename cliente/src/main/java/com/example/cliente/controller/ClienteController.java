@@ -11,12 +11,12 @@ import com.example.cliente.entity.Cliente;
 
 @RestController
 @RequestMapping("/cliente")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
     @GetMapping()
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<Cliente>> list() {
         return ResponseEntity.ok().body(clienteService.listar());
     }
