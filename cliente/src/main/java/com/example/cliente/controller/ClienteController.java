@@ -36,15 +36,8 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable(required = true) Integer id) {
+    public String deleteById(@PathVariable(required = true) Integer id) {
         clienteService.eliminarPorId(id);
-        return ResponseEntity.ok("Eliminación Correcta");
-    }
-
-    // Configuración de CORS para las solicitudes DELETE
-    @CrossOrigin(origins = "http://localhost:3000")
-    @RequestMapping(method = RequestMethod.OPTIONS, path = "/{id}")
-    public ResponseEntity<?> options() {
-        return ResponseEntity.ok().build();
+        return "Eliminacion Correcta";
     }
 }
