@@ -16,6 +16,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @GetMapping()
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<Cliente>> list() {
         return ResponseEntity.ok().body(clienteService.listar());
     }
