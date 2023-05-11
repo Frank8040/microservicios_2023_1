@@ -1,4 +1,5 @@
 package com.example.cliente.controller;
+
 import com.example.cliente.service.ClienteService;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import com.example.cliente.entity.Cliente;
 
 @RestController
 @RequestMapping("/cliente")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;
@@ -28,7 +30,7 @@ public class ClienteController {
     public ResponseEntity<Cliente> update(@RequestBody Cliente Cliente) {
         return ResponseEntity.ok(clienteService.actualizar(Cliente));
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> listById(@PathVariable(required = true) Integer id) {
         return ResponseEntity.ok(clienteService.listarPorId(id).get());
@@ -40,8 +42,6 @@ public class ClienteController {
         return ResponseEntity.ok("Eliminación Correcta");
     }
 
-    // Configuración de CORS para las solicitudes DELETE
-    @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(method = RequestMethod.OPTIONS, path = "/{id}")
     public ResponseEntity<?> options() {
         return ResponseEntity.ok().build();
