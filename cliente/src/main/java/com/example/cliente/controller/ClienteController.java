@@ -11,6 +11,7 @@ import com.example.cliente.entity.Cliente;
 
 @RestController
 @RequestMapping("/cliente")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;
