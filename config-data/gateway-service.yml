@@ -37,4 +37,4 @@ spring:
         - id: imagen-service
           uri: lb://imagen-service
           predicates:
-            - Path=/iamgen/**
+            - Path=/imagen/**
