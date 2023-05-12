@@ -11,6 +11,4 @@ public class Imagen {
     private Integer id;
     private String type;
     private String url;
-    private String apellidoPaterno;
-    private String apellidoMaterno;
 }

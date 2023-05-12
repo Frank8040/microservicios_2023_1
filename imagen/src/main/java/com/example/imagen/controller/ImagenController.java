@@ -2,6 +2,7 @@ package com.example.imagen.controller;
 
 import com.example.imagen.service.ImagenService;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,31 +14,47 @@ import com.example.imagen.entity.Imagen;
 @RequestMapping("/imagen")
 public class ImagenController {
     @Autowired
-    private ImagenService clienteService;
+    private ImagenService imagenService;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<Imagen>> list() {
-        return ResponseEntity.ok().body(clienteService.listar());
+        List<Imagen> imagenes = imagenService.listar();
+        return ResponseEntity.ok(imagenes);
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Imagen> save(@RequestBody Imagen imagen) {
-        return ResponseEntity.ok(clienteService.guardar(imagen));
+        Imagen nuevaImagen = imagenService.guardar(imagen);
+        return ResponseEntity.ok(nuevaImagen);
     }
 
-    @PutMapping()
-    public ResponseEntity<Imagen> update(@RequestBody Imagen imagen) {
-        return ResponseEntity.ok(clienteService.actualizar(imagen));
+    @PutMapping("/{id}")
+    public ResponseEntity<Imagen> update(@PathVariable("id") Integer id, @RequestBody Imagen imagen) {
+        Optional<Imagen> imagenExistente = imagenService.listarPorId(id);
+        if (imagenExistente.isPresent()) {
+            imagen.setId(id);
+            Imagen imagenActualizada = imagenService.actualizar(imagen);
+            return ResponseEntity.ok(imagenActualizada);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Imagen> listById(@PathVariable(required = true) Integer id) {
-        return ResponseEntity.ok(clienteService.listarPorId(id).get());
+    public ResponseEntity<Imagen> listById(@PathVariable("id") Integer id) {
+        Optional<Imagen> imagen = imagenService.listarPorId(id);
+        if (imagen.isPresent()) {
+            return ResponseEntity.ok(imagen.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public String deleteById(@PathVariable(required = true) Integer id) {
-        clienteService.eliminarPorId(id);
-        return "Eliminacion Correcta";
+    public ResponseEntity<String> deleteById(@PathVariable("id") Integer id) {
+        Optional<Imagen> imagenExistente = imagenService.listarPorId(id);
+        if (imagenExistente.isPresent()) {
+            imagenService.eliminarPorId(id);
+            return ResponseEntity.ok("Eliminación correcta");
+        }
+        return ResponseEntity.notFound().build();
     }
 }

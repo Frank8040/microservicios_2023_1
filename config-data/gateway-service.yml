@@ -34,3 +34,7 @@ spring:
           uri: lb://venta-service
           predicates:
             - Path=/venta/**
+        - id: imagen-service
+          uri: lb://imagen-service
+          predicates:
+            - Path=/iamgen/**
