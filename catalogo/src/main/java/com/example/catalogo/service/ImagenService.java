@@ -55,7 +55,7 @@ public class ImagenService {
         uploadRepository.deleteById(id);
     }
 
-    private static final String UPLOAD_DIRECTORY = "/src/main/resources/picture";
+    private static final String UPLOAD_DIRECTORY = "src/main/resources/picture";
 
     public String saveImage(MultipartFile file) throws IOException {
         String fileName = generateFileName(file.getOriginalFilename());

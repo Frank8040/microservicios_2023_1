@@ -11,7 +11,7 @@ import com.example.catalogo.service.ImagenService;
 import com.example.catalogo.entity.Imagen;
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/imagen")
 public class ImagenController {
     @Autowired
     private ImagenService uploadService;
