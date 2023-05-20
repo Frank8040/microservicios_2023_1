@@ -1,9 +1,7 @@
 package com.example.catalogo.service.impl;
 
-import com.example.catalogo.dto.Imagen;
 import com.example.catalogo.entity.Categoria;
 import com.example.catalogo.entity.Producto;
-import com.example.catalogo.feign.ImagenFeign;
 import com.example.catalogo.repository.CategoriaRepository;
 import com.example.catalogo.repository.ProductoRepository;
 import com.example.catalogo.service.ProductoService;
@@ -20,9 +18,6 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
-
-    @Autowired
-    private ImagenFeign imagenFeign;
 
     @Override
     public List<Producto> listar() {
@@ -53,13 +48,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public Optional<Producto> listarPorId(Integer id) {
-        Optional<Producto> productoOptional = productoRepository.findById(id);
-        if (productoOptional.isPresent()) {
-            Producto producto = productoOptional.get();
-            Imagen imagen = imagenFeign.listById(producto.getImagenId()).getBody();
-            producto.setImagen(imagen);
-        }
-        return productoOptional;
+        return productoRepository.findById(id);
     }
 
     @Override
