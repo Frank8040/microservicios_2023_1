@@ -77,4 +77,8 @@ public class ImagenService {
         String uniqueFileName = UUID.randomUUID().toString();
         return uniqueFileName + extension;
     }
+
+    public Imagen save(Imagen upload) {
+        return null;
+    }
 }

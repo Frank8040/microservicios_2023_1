@@ -12,32 +12,32 @@ import com.example.catalogo.service.CategoriaService;
 @RestController
 @RequestMapping("/categoria")
 public class CategoriaController {
-    @Autowired
-    private CategoriaService categoriaService;
+  @Autowired
+  private CategoriaService categoriaService;
 
-    @GetMapping()
-    public ResponseEntity<List<Categoria>> listar() {
-        return ResponseEntity.ok().body(categoriaService.listar());
-    }
+  @GetMapping()
+  public ResponseEntity<List<Categoria>> listar() {
+    return ResponseEntity.ok().body(categoriaService.listar());
+  }
 
-    @PostMapping()
-    public ResponseEntity<Categoria> guardar(@RequestBody Categoria categoria) {
-        return ResponseEntity.ok(categoriaService.guardar(categoria));
-    }
+  @PostMapping()
+  public ResponseEntity<Categoria> guardar(@RequestBody Categoria categoria) {
+    return ResponseEntity.ok(categoriaService.guardar(categoria));
+  }
 
-    @PutMapping()
-    public ResponseEntity<Categoria> actualizar(@RequestBody Categoria categoria) {
-        return ResponseEntity.ok(categoriaService.actualizar(categoria));
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Categoria> buscarPorId(@PathVariable(required = true) Integer id) {
-        return ResponseEntity.ok(categoriaService.listarPorId(id).get());
-    }
+  @PutMapping()
+  public ResponseEntity<Categoria> actualizar(@RequestBody Categoria categoria) {
+    return ResponseEntity.ok(categoriaService.actualizar(categoria));
+  }
 
-    @DeleteMapping("/{id}")
-    public String eliminar(@PathVariable(required = true) Integer id) {
-        categoriaService.eliminarPorId(id);
-        return "Eliminación Correcta";
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<Categoria> buscarPorId(@PathVariable(required = true) Integer id) {
+    return ResponseEntity.ok(categoriaService.listarPorId(id).get());
+  }
+
+  @DeleteMapping("/{id}")
+  public String eliminar(@PathVariable(required = true) Integer id) {
+    categoriaService.eliminarPorId(id);
+    return "Eliminación Correcta";
+  }
 }
