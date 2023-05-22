@@ -65,7 +65,7 @@ public class ImagenController {
       String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
       String newFileName = filename + fileExtension;
 
-      String uploadDir = "public/imagenes";
+      String uploadDir = "src/main/resources/public/imagenes";
       File folder = new File(uploadDir);
       if (!folder.exists()) {
         folder.mkdirs();
@@ -137,7 +137,7 @@ public class ImagenController {
       String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
       String newFileName = filename + fileExtension;
 
-      String uploadDir = "src/main/resources/imagenes";
+      String uploadDir = "imagenes";
       File folder = new File(uploadDir);
       if (!folder.exists()) {
         folder.mkdirs();
