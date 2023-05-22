@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/imagen")
 public class ImagenController {
+
+  private final String UPLOAD_DIR = "src/main/resources/public/imagenes";
+
   @Autowired
   private ImagenService imagenService;
 
@@ -40,52 +44,35 @@ public class ImagenController {
     }
 
     try {
-      // Verifica la extensión del archivo
-      String originalFilename = file.getOriginalFilename();
-      if (originalFilename == null) {
-        System.err.println("No se puede obtener el nombre del archivo adjunto.");
-        return ResponseEntity.badRequest().build();
-      }
-
-      if (!isValidImageExtension(originalFilename)) {
-        System.err.println("La extensión del archivo adjunto no es compatible.");
-        return ResponseEntity.badRequest().build();
-      }
-
       // Resto del código para guardar el archivo y realizar otras operaciones
       String filename = UUID.randomUUID().toString();
-      byte[] bytes = file.getBytes();
-      long fileSize = file.getSize();
-      long maxFileSize = 5 * 1024 * 1024;
-
-      if (fileSize > maxFileSize) {
-        return ResponseEntity.badRequest().body("File exceeds, max 5MB");
-      }
-
-      String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+      String fileExtension = getFileExtension(file.getOriginalFilename());
       String newFileName = filename + fileExtension;
+      Path filePath = Path.of(UPLOAD_DIR, newFileName);
 
-      String uploadDir = "src/main/resources/public/imagenes";
-      File folder = new File(uploadDir);
-      if (!folder.exists()) {
-        folder.mkdirs();
-      }
-
-      Path path = Paths.get(uploadDir + "/" + newFileName);
-      Files.write(path, bytes);
-
-      String base64File = fileToBase64(path.toString());
+      // Guarda el archivo en la carpeta de imágenes
+      Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
       // Asigna la URL del archivo a la imagen como una cadena de texto
-      imagen.setUrl(path.toString());
+      String fileUrl = "/imagenes/" + newFileName;
+      imagen.setUrl(fileUrl);
 
       // Guarda o realiza otras operaciones necesarias con el objeto 'imagen'
       imagenService.guardar(imagen);
 
-      return ResponseEntity.ok(base64File);
+      return ResponseEntity.ok(fileUrl);
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+  }
+  private String getFileExtension(String filename) {
+    int dotIndex = filename.lastIndexOf('.');
+    return (dotIndex == -1) ? "" : filename.substring(dotIndex);
+  }
+
+  /*private String getFileNameFromUrl(String url) {
+    int slashIndex = url.lastIndexOf('/');
+    return (slashIndex == -1) ? url : url.substring(slashIndex + 1);
   }
 
   private boolean isValidImageExtension(String filename) {
@@ -158,7 +145,7 @@ public class ImagenController {
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
-  }
+  }*/
 
   @GetMapping("/{id}")
   public ResponseEntity<Imagen> listById(@PathVariable(required = true) Integer id) {
