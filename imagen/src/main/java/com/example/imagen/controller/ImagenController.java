@@ -38,30 +38,25 @@ public class ImagenController {
 
   @PostMapping()
   public ResponseEntity<String> save(@ModelAttribute Imagen imagen, @RequestParam("file") MultipartFile file) {
-    // Verifica si se ha proporcionado un archivo
+
     if (file.isEmpty()) {
       System.err.println("No se ha proporcionado un archivo adjunto válido.");
       return ResponseEntity.badRequest().build();
     }
 
     try {
-      // Resto del código para guardar el archivo y realizar otras operaciones
       String filename = UUID.randomUUID().toString();
       String fileExtension = getFileExtension(file.getOriginalFilename());
       String newFileName = filename + fileExtension;
       Path filePath = Path.of(UPLOAD_DIR, newFileName);
-      // Obtén la URL base de la aplicación
+  
       String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
-      // Guarda el archivo en la carpeta de imágenes
       Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-      // Asigna la URL del archivo a la imagen como una cadena de texto
-      // Construye la URL completa y accesible a la imagen
       String fileUrl = baseUri + "/imagenes/" + newFileName;
       imagen.setUrl(fileUrl);
 
-      // Guarda o realiza otras operaciones necesarias con el objeto 'imagen'
       imagenService.guardar(imagen);
 
       return ResponseEntity.ok(fileUrl);
