@@ -25,19 +25,19 @@ public class AuthUserServiceImpl implements AuthUserService {
 
     @Override
     public Auth save(AuthUserDto dto) {
-        Optional<Auth> user = authUserRepository.findByUserName(dto.getUserName());
+        Optional<Auth> user = authUserRepository.findByUserName(dto.getName());
         if (user.isPresent())
             return null;
         String password = passwordEncoder.encode(dto.getPassword());
         Auth authUser = Auth.builder()
-                .name(dto.getUserName())
+                .name(dto.getName())
                 .password(password)
                 .build();
         return authUserRepository.save(authUser);
     }
     @Override
     public TokenDto login(AuthUserDto dto) {
-            Optional<Auth> user = authUserRepository.findByUserName(dto.getUserName());
+            Optional<Auth> user = authUserRepository.findByUserName(dto.getName());
             if(!user.isPresent())
                 return null;
             if(passwordEncoder.matches(dto.getPassword(), user.get().getPassword()))
@@ -49,8 +49,8 @@ public class AuthUserServiceImpl implements AuthUserService {
     public TokenDto validate(String token) {
         if(!jwtProvider.validate(token))
             return null;
-        String username = jwtProvider.getUserNameFromToken(token);
-        if(!authUserRepository.findByUserName(username).isPresent())
+        String name = jwtProvider.getUserNameFromToken(token);
+        if(!authUserRepository.findByUserName(name).isPresent())
             return null;
         return new TokenDto(token);
     }
