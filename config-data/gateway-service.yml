@@ -38,3 +38,7 @@ spring:
           uri: lb://imagen-service
           predicates:
             - Path=/imagen/**
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
