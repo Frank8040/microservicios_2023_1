@@ -4,7 +4,6 @@ import com.example.imagen.service.ImagenService;
 import com.example.imagen.entity.Imagen;
 
 import java.io.IOException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +35,7 @@ public class ImagenController {
   }
 
   @PostMapping()
-  public ResponseEntity<String> save(@RequestBody Imagen imagen, @RequestParam("file") MultipartFile file) {
+  public ResponseEntity<String> save(@ModelAttribute Imagen imagen, @RequestParam("file") MultipartFile file) {
 
     if (file.isEmpty()) {
       System.err.println("No se ha proporcionado un archivo adjunto válido.");
@@ -91,7 +90,7 @@ public class ImagenController {
    * }
    */
   @PutMapping()
-  public ResponseEntity<String> update(@RequestBody Imagen imagen, @RequestParam("file") MultipartFile file) {
+  public ResponseEntity<String> update(@ModelAttribute Imagen imagen, @RequestParam("file") MultipartFile file) {
     try {
       // Obtén la imagen existente antes de la actualización
       Optional<Imagen> imagenExistente = imagenService.listarPorId(imagen.getId());
