@@ -158,24 +158,35 @@ public class ImagenController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteById(@PathVariable(required = true) Integer id) {
-    // Obtener la imagen por su ID
-    Optional<Imagen> imagenOptional = imagenService.listarPorId(id);
-    if (!imagenOptional.isPresent()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    // Eliminar el archivo de la carpeta
-    String filePath = imagenOptional.get().getUrl();
-    try {
-      Files.deleteIfExists(Paths.get(filePath));
-    } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-
-    // Eliminar el producto
-    imagenService.eliminarPorId(id);
-
-    return ResponseEntity.ok("Eliminación correcta");
+public ResponseEntity<String> deleteById(@PathVariable(required = true) Integer id) throws IOException {
+  // Obtener la imagen por su ID
+  Optional<Imagen> imagenOptional = imagenService.listarPorId(id);
+  if (!imagenOptional.isPresent()) {
+    return ResponseEntity.notFound().build();
   }
+
+  // Obtener la imagen y su URL
+  Imagen imagen = imagenOptional.get();
+  String imageUrl = imagen.getUrl();
+
+  // Verificar la existencia de la imagen en el sistema de archivos
+  if (!imageExists(imageUrl)) {
+    return ResponseEntity.notFound().build();
+  }
+
+  // Eliminar el archivo de la carpeta
+  deleteImageFile(imageUrl);
+
+  // Eliminar la imagen de la base de datos
+  imagenService.eliminarPorId(id);
+
+  return ResponseEntity.ok("Eliminación correcta");
+}
+
+private boolean imageExists(String imageUrl) {
+  String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+  String filePath = UPLOAD_DIR + "/" + fileName;
+  return Files.exists(Paths.get(filePath));
+}
+
 }
