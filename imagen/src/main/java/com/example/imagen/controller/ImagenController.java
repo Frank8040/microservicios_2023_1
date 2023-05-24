@@ -34,6 +34,12 @@ public class ImagenController {
     return ResponseEntity.ok().body(imagenService.listar());
   }
 
+  private boolean isValidImageExtension(String fileExtension) {
+    return fileExtension.equalsIgnoreCase(".png") ||
+        fileExtension.equalsIgnoreCase(".jpg") ||
+        fileExtension.equalsIgnoreCase(".jpeg");
+  }
+
   @PostMapping()
   public ResponseEntity<String> save(@ModelAttribute Imagen imagen, @RequestParam("file") MultipartFile file) {
 
@@ -43,8 +49,11 @@ public class ImagenController {
     }
 
     try {
-      String filename = UUID.randomUUID().toString();
       String fileExtension = getFileExtension(file.getOriginalFilename());
+      if (!isValidImageExtension(fileExtension)) {
+        return ResponseEntity.badRequest().body("Solo se permiten archivos con extensiones .png, .jpg y .jpeg");
+      }
+      String filename = UUID.randomUUID().toString();
       String newFileName = filename + fileExtension;
       Path filePath = Path.of(UPLOAD_DIR, newFileName);
 
@@ -63,75 +72,59 @@ public class ImagenController {
     }
   }
 
-  private String getFileExtension(String filename) {
-    int dotIndex = filename.lastIndexOf('.');
-    return (dotIndex == -1) ? "" : filename.substring(dotIndex);
-  }
-
-  /*
-   * private String getFileNameFromUrl(String url) {
-   * int slashIndex = url.lastIndexOf('/');
-   * return (slashIndex == -1) ? url : url.substring(slashIndex + 1);
-   * }
-   * 
-   * private boolean isValidImageExtension(String filename) {
-   * return filename.matches("^.*\\.(jpg|jpeg|png)$");
-   * }
-   * 
-   * public String fileToBase64(String filePath) {
-   * try {
-   * File file = new File(filePath);
-   * byte[] fileContent = Files.readAllBytes(file.toPath());
-   * return Base64.getEncoder().encodeToString(fileContent);
-   * } catch (IOException e) {
-   * e.printStackTrace();
-   * }
-   * return null;
-   * }
-   */
   @PutMapping("/imagen/{id}")
-  public ResponseEntity<String> update(@PathVariable("id") Integer id, @RequestParam("type") String type,
-      @RequestParam("file") MultipartFile file) {
+  public ResponseEntity<String> updateImage(@PathVariable("id") Integer id,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "file", required = false) MultipartFile file) {
+
+    Optional<Imagen> imagenExistente = imagenService.listarPorId(id);
+    if (!imagenExistente.isPresent()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    Imagen imagenActual = imagenExistente.get();
+
     try {
-      Optional<Imagen> imagenExistente = imagenService.listarPorId(id);
-      if (!imagenExistente.isPresent()) {
-        return ResponseEntity.notFound().build();
-      }
-      Imagen imagenActual = imagenExistente.get();
-
-      if (file.isEmpty()) {
-        // No se proporcionó un archivo adjunto, conserva la URL y los datos existentes
-        // de la imagen y actualiza otros campos
+      if (type != null) {
         imagenActual.setType(type);
-        imagenService.actualizar(imagenActual);
-        return ResponseEntity.ok(imagenActual.getUrl());
       }
 
-      String filename = UUID.randomUUID().toString();
-      String fileExtension = getFileExtension(file.getOriginalFilename());
-      String newFileName = filename + fileExtension;
-      Path filePath = Path.of(UPLOAD_DIR, newFileName);
+      if (file != null && !file.isEmpty()) {
+        String fileExtension = getFileExtension(file.getOriginalFilename());
+        if (!isValidImageExtension(fileExtension)) {
+          return ResponseEntity.badRequest().body("Solo se permiten archivos con extensiones .png, .jpg y .jpeg");
+        }
 
-      String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String filename = UUID.randomUUID().toString();
+        String newFileName = filename + fileExtension;
+        Path filePath = Path.of(UPLOAD_DIR, newFileName);
 
-      if (!file.getOriginalFilename()
-          .equals(imagenActual.getUrl().substring(imagenActual.getUrl().lastIndexOf("/") + 1))) {
+        String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         // Elimina el archivo de imagen existente solo si se ha copiado el archivo
         // adjunto con un nuevo nombre
         deleteImageFile(imagenActual.getUrl());
-      }
 
-      String fileUrl = baseUri + "/imagenes/" + newFileName;
-      imagenActual.setUrl(fileUrl);
-      imagenActual.setType(type);
+        String fileUrl = baseUri + "/imagenes/" + newFileName;
+        imagenActual.setUrl(fileUrl);
+      }
 
       imagenService.actualizar(imagenActual);
 
-      return ResponseEntity.ok(fileUrl);
+      return ResponseEntity.ok(imagenActual.getUrl());
     } catch (IOException e) {
+      e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+  }
+
+  private String getFileExtension(String fileName) {
+    int dotIndex = fileName.lastIndexOf(".");
+    if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+      return fileName.substring(dotIndex);
+    }
+    return "";
   }
 
   private void deleteImageFile(String imageUrl) {
