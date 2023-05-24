@@ -89,11 +89,11 @@ public class ImagenController {
    * return null;
    * }
    */
-  @PutMapping()
-  public ResponseEntity<String> update(@ModelAttribute Imagen imagen, @RequestParam("file") MultipartFile file) {
+  @PutMapping("/imagen/{id}")
+  public ResponseEntity<String> update(@PathVariable("id") Integer id, @RequestParam("type") String type,
+      @RequestParam("file") MultipartFile file) {
     try {
-      // Obtén la imagen existente antes de la actualización
-      Optional<Imagen> imagenExistente = imagenService.listarPorId(imagen.getId());
+      Optional<Imagen> imagenExistente = imagenService.listarPorId(id);
       if (!imagenExistente.isPresent()) {
         return ResponseEntity.notFound().build();
       }
@@ -102,12 +102,10 @@ public class ImagenController {
       if (file.isEmpty()) {
         // No se proporcionó un archivo adjunto, conserva la URL y los datos existentes
         // de la imagen y actualiza otros campos
-        imagen.setUrl(imagenActual.getUrl());
-        imagenService.actualizar(imagen);
-        return ResponseEntity.ok(imagen.getUrl());
+        imagenActual.setType(type);
+        imagenService.actualizar(imagenActual);
+        return ResponseEntity.ok(imagenActual.getUrl());
       }
-
-      // Se proporcionó un archivo adjunto, realiza la actualización de la imagen
 
       String filename = UUID.randomUUID().toString();
       String fileExtension = getFileExtension(file.getOriginalFilename());
@@ -116,18 +114,18 @@ public class ImagenController {
 
       String baseUri = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
-      Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+      if (!file.getOriginalFilename()
+          .equals(imagenActual.getUrl().substring(imagenActual.getUrl().lastIndexOf("/") + 1))) {
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        // Elimina el archivo de imagen existente solo si se ha copiado el archivo
+        // adjunto con un nuevo nombre
+        deleteImageFile(imagenActual.getUrl());
+      }
 
       String fileUrl = baseUri + "/imagenes/" + newFileName;
-      imagen.setUrl(fileUrl);
+      imagenActual.setUrl(fileUrl);
+      imagenActual.setType(type);
 
-      // Elimina el archivo de imagen existente
-      deleteImageFile(imagenActual.getUrl());
-
-      // Actualiza los datos de la imagen con los valores actualizados y guarda la
-      // imagen
-      imagenActual.setType(imagen.getType());
-      imagenActual.setUrl(imagen.getUrl());
       imagenService.actualizar(imagenActual);
 
       return ResponseEntity.ok(fileUrl);
@@ -158,35 +156,35 @@ public class ImagenController {
   }
 
   @DeleteMapping("/{id}")
-public ResponseEntity<String> deleteById(@PathVariable(required = true) Integer id) throws IOException {
-  // Obtener la imagen por su ID
-  Optional<Imagen> imagenOptional = imagenService.listarPorId(id);
-  if (!imagenOptional.isPresent()) {
-    return ResponseEntity.notFound().build();
+  public ResponseEntity<String> deleteById(@PathVariable(required = true) Integer id) throws IOException {
+    // Obtener la imagen por su ID
+    Optional<Imagen> imagenOptional = imagenService.listarPorId(id);
+    if (!imagenOptional.isPresent()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    // Obtener la imagen y su URL
+    Imagen imagen = imagenOptional.get();
+    String imageUrl = imagen.getUrl();
+
+    // Verificar la existencia de la imagen en el sistema de archivos
+    if (!imageExists(imageUrl)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    // Eliminar el archivo de la carpeta
+    deleteImageFile(imageUrl);
+
+    // Eliminar la imagen de la base de datos
+    imagenService.eliminarPorId(id);
+
+    return ResponseEntity.ok("Eliminación correcta");
   }
 
-  // Obtener la imagen y su URL
-  Imagen imagen = imagenOptional.get();
-  String imageUrl = imagen.getUrl();
-
-  // Verificar la existencia de la imagen en el sistema de archivos
-  if (!imageExists(imageUrl)) {
-    return ResponseEntity.notFound().build();
+  private boolean imageExists(String imageUrl) {
+    String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+    String filePath = UPLOAD_DIR + "/" + fileName;
+    return Files.exists(Paths.get(filePath));
   }
-
-  // Eliminar el archivo de la carpeta
-  deleteImageFile(imageUrl);
-
-  // Eliminar la imagen de la base de datos
-  imagenService.eliminarPorId(id);
-
-  return ResponseEntity.ok("Eliminación correcta");
-}
-
-private boolean imageExists(String imageUrl) {
-  String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-  String filePath = UPLOAD_DIR + "/" + fileName;
-  return Files.exists(Paths.get(filePath));
-}
 
 }
