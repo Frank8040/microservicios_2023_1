@@ -9,13 +9,22 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import org.springframework.context.annotation.Bean;
 
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 @SpringBootApplication
 @EnableFeignClients
-public class CatalogoApplication {
+public class CatalogoApplication implements WebMvcConfigurer {
 
   public static void main(String[] args) {
     SpringApplication.run(CatalogoApplication.class, args);
   }
+
+  @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/imagenes/**")
+                .addResourceLocations("file:src/main/resources/public/imagenes/");
+    }
 
   @Bean
   public OpenAPI custoOpenAPI() {
