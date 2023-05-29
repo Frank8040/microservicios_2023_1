@@ -1,8 +1,8 @@
 package com.example.auth.controller;
 
 import com.example.auth.dto.AuthUserDto;
-import com.example.auth.dto.TokenDto;
 import com.example.auth.entity.Auth;
+import com.example.auth.entity.TokenDto;
 import com.example.auth.service.AuthUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

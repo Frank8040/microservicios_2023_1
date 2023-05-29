@@ -1,8 +1,8 @@
 package com.example.auth.service.impl;
 
 import com.example.auth.dto.AuthUserDto;
-import com.example.auth.dto.TokenDto;
 import com.example.auth.entity.Auth;
+import com.example.auth.entity.TokenDto;
 import com.example.auth.repository.AuthRepository;
 import com.example.auth.security.JwtProvider;
 import com.example.auth.service.AuthUserService;
