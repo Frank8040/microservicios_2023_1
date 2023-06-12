@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/producto")
 public class ProductoController {
-
   private final String UPLOAD_DIR = "src/main/resources/public/imagenes";
 
   @Autowired
@@ -42,12 +41,6 @@ public class ProductoController {
     }
     return productos;
   }
-
-  /*@PostMapping()
-  public Producto guardar(@RequestBody Producto producto) {
-    producto.setCategoria(producto.getCategoria());
-    return productoService.guardar(producto);
-  }*/
 
   @PostMapping()
   public ResponseEntity<String> guardar(@ModelAttribute Producto producto, @RequestParam("file") MultipartFile file) {
@@ -88,7 +81,6 @@ public class ProductoController {
         fileExtension.equalsIgnoreCase(".jpeg");
   }
 
-
   private String getFileExtension(String fileName) {
     int dotIndex = fileName.lastIndexOf(".");
     if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
@@ -104,17 +96,11 @@ public class ProductoController {
     return producto;
   }
 
-  @PutMapping()
-  public Producto actualizar(@RequestBody Producto producto) {
-    producto.setCategoria(producto.getCategoria());
-    return productoService.actualizar(producto);
-  }
-
   @PutMapping("/imagen/{id}")
   public ResponseEntity<String> actualizar(@PathVariable("id") Integer id,
       @RequestParam(value = "nombre", required = false) String nombre,
       @RequestParam(value = "file", required = false) MultipartFile file,
-      @RequestBody Producto producto) {
+      @ModelAttribute Producto producto) {
 
     Optional<Producto> imagenExistente = productoService.listarPorId(id);
     if (!imagenExistente.isPresent()) {
@@ -126,13 +112,13 @@ public class ProductoController {
     try {
       if (nombre != null) {
         imagenActual.setNombre(nombre);
-        producto.setCategoria(producto.getCategoria());
       }
 
       if (file != null && !file.isEmpty()) {
         String fileExtension = getFileExtension(file.getOriginalFilename());
         if (!isValidImageExtension(fileExtension)) {
-          return ResponseEntity.badRequest().body("Solo se permiten archivos con extensiones .png, .jpg y .jpeg");
+          return ResponseEntity.badRequest()
+              .body("Solo se permiten archivos con extensiones .png, .jpg y .jpeg");
         }
 
         String filename = UUID.randomUUID().toString();
@@ -148,6 +134,37 @@ public class ProductoController {
 
         String fileUrl = baseUri + "/imagenes/" + newFileName;
         imagenActual.setImagen(fileUrl);
+      }
+
+      if (producto.getNombre() != null) {
+        imagenActual.setNombre(producto.getNombre());
+      }
+      if (producto.getCategoria() != null) {
+        imagenActual.setCategoria(producto.getCategoria());
+      }
+      if (producto.getPrecio() != null) {
+        imagenActual.setPrecio(producto.getPrecio());
+      }
+      if (producto.getStock() != null) {
+        imagenActual.setStock(producto.getStock());
+      }
+      if (producto.getDetalle() != null) {
+        imagenActual.setDetalle(producto.getDetalle());
+      }
+      if (producto.getMaterial() != null) {
+        imagenActual.setMaterial(producto.getMaterial());
+      }
+      if (producto.getLargo() != null) {
+        imagenActual.setLargo(producto.getLargo());
+      }
+      if (producto.getAncho() != null) {
+        imagenActual.setAncho(producto.getAncho());
+      }
+      if (producto.getAlto() != null) {
+        imagenActual.setAlto(producto.getAlto());
+      }
+      if (producto.getEstado() != null) {
+        imagenActual.setEstado(producto.getEstado());
       }
 
       productoService.actualizar(imagenActual);
@@ -176,7 +193,34 @@ public class ProductoController {
   }
 
   @DeleteMapping("/{id}")
-  public void eliminar(@PathVariable(required = true) Integer id) {
+  public ResponseEntity<String> eliminar(@PathVariable(required = true) Integer id) throws IOException {
+    // Obtener la imagen por su ID
+    Optional<Producto> imagenOptional = productoService.listarPorId(id);
+    if (!imagenOptional.isPresent()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    // Obtener la imagen y su URL
+    Producto imagen = imagenOptional.get();
+    String imageUrl = imagen.getImagen();
+
+    // Verificar la existencia de la imagen en el sistema de archivos
+    if (!imageExists(imageUrl)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    // Eliminar el archivo de la carpeta
+    deleteImageFile(imageUrl);
+
+    // Eliminar la imagen de la base de datos
     productoService.eliminarPorId(id);
+
+    return ResponseEntity.ok("Eliminación correcta");
+  }
+
+  private boolean imageExists(String imageUrl) {
+    String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+    String filePath = UPLOAD_DIR + "/" + fileName;
+    return Files.exists(Paths.get(filePath));
   }
 }
