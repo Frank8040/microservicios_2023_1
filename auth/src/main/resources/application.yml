@@ -5,6 +5,6 @@ spring:
     active: development
   config:
     import: optional:configserver:http://root:s3cr3t@localhost:8484
-    
+
 jwt:
   secret: secret

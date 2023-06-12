@@ -1,21 +1,20 @@
 package com.example.auth.security;
-import com.example.auth.entity.Auth;
+
+import com.example.auth.entity.AuthUser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+
+import javax.annotation.PostConstruct;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 @Component
 public class JwtProvider {
-
     @Value("${jwt.secret}")
     private String secret;
 
@@ -24,9 +23,9 @@ public class JwtProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToken(Auth authUser) {
+    public String createToken(AuthUser authUser) {
         Map<String, Object> claims = new HashMap<>();
-        claims = Jwts.claims().setSubject(authUser.getName());
+        claims = Jwts.claims().setSubject(authUser.getUserName());
         claims.put("id", authUser.getId());
         Date now = new Date();
         Date exp = new Date(now.getTime() + 3600000);

@@ -1,13 +1,13 @@
 package com.example.venta.controller;
 
 import com.example.venta.service.VentaService;
-import java.util.List;
+import com.example.venta.entity.Venta;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.venta.entity.Venta;
+import java.util.List;
 
 @RestController
 @RequestMapping("/venta")

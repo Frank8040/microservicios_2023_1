@@ -1,7 +1,9 @@
 package com.example.auth.service.impl;
 
 import com.example.auth.dto.AuthUserDto;
-import com.example.auth.entity.Auth;
+
+import com.example.auth.entity.AuthUser;
+
 import com.example.auth.entity.TokenDto;
 import com.example.auth.repository.AuthRepository;
 import com.example.auth.security.JwtProvider;
@@ -15,43 +17,44 @@ import java.util.Optional;
 @Service
 public class AuthUserServiceImpl implements AuthUserService {
     @Autowired
-    AuthRepository authUserRepository;
-
+    AuthRepository authRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     JwtProvider jwtProvider;
 
     @Override
-    public Auth save(AuthUserDto dto) {
-        Optional<Auth> user = authUserRepository.findByName(dto.getName());
+    public AuthUser save(AuthUserDto authUserDto) {
+        Optional<AuthUser> user = authRepository.findByUserName(authUserDto.getUserName());
         if (user.isPresent())
             return null;
-        String password = passwordEncoder.encode(dto.getPassword());
-        Auth authUser = Auth.builder()
-                .name(dto.getName())
+        String password = passwordEncoder.encode(authUserDto.getPassword());
+        AuthUser authUser = AuthUser.builder()
+                .userName(authUserDto.getUserName())
                 .password(password)
                 .build();
-        return authUserRepository.save(authUser);
+
+        return authRepository.save(authUser);
     }
+
     @Override
-    public TokenDto login(AuthUserDto dto) {
-            Optional<Auth> user = authUserRepository.findByName(dto.getName());
-            if(!user.isPresent())
-                return null;
-            if(passwordEncoder.matches(dto.getPassword(), user.get().getPassword()))
-                return new TokenDto(jwtProvider.createToken(user.get()));
+    public TokenDto login(AuthUserDto authUserDto) {
+        Optional<AuthUser> user = authRepository.findByUserName(authUserDto.getUserName());
+        if (!user.isPresent())
             return null;
-        }
+        if (passwordEncoder.matches(authUserDto.getPassword(), user.get().getPassword()))
+            return new TokenDto(jwtProvider.createToken(user.get()));
+        return null;
+    }
 
     @Override
     public TokenDto validate(String token) {
-        if(!jwtProvider.validate(token))
+       if (!jwtProvider.validate(token))
             return null;
-        String name = jwtProvider.getUserNameFromToken(token);
-        if(!authUserRepository.findByName(name).isPresent())
+        String username = jwtProvider.getUserNameFromToken(token);
+        if (!authRepository.findByUserName(username).isPresent())
             return null;
+
         return new TokenDto(token);
     }
 }

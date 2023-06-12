@@ -8,16 +8,16 @@ spring:
   cloud:
     gateway:
       globalcors:
-          corsConfigurations:
-            '[/**]':
-              allowedOrigins:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins:
               - "http://localhost:3000"
-              allowedHeaders: "*"
-              allowedMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
       discovery:
         locator:
           enabled: true
@@ -26,6 +26,8 @@ spring:
           uri: lb://catalogo-service
           predicates:
             - Path=/categoria/**,/producto/**
+          filters:
+            - AuthFilter
         - id: cliente-service
           uri: lb://cliente-service
           predicates:
@@ -36,10 +38,14 @@ spring:
           uri: lb://venta-service
           predicates:
             - Path=/venta/**
+          filters:
+            - AuthFilter
         - id: imagen-service
           uri: lb://imagen-service
           predicates:
             - Path=/imagen/**
+          filters:
+            - AuthFilter
         - id: auth-service
           uri: lb://auth-service
           predicates:

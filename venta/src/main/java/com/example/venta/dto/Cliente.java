@@ -6,7 +6,8 @@ import lombok.Data;
 public class Cliente {
     private Integer id;
     private String nombre;
-    private String dni;
     private String apellidoPaterno;
     private String apellidoMaterno;
+    private String dni;
+    private String celular;
 }

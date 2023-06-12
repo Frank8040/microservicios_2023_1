@@ -8,7 +8,13 @@ import lombok.Data;
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer categoriaId;
-    private String categoriaName;
-    private String categoriaDescription;
+    private Integer id;
+    private String nombre;
+    private String descripcion;
+    private Estado estado;
+
+    public enum Estado {
+        Activo,
+        Inactivo
+    }
 }

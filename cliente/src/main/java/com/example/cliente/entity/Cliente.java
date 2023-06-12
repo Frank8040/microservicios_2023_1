@@ -10,7 +10,8 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
-    private String dni;
     private String apellidoPaterno;
     private String apellidoMaterno;
+    private String dni;
+    private String celular;
 }

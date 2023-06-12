@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.catalogo.entity.Categoria;
 import com.example.catalogo.entity.Producto;
 import com.example.catalogo.service.ProductoService;
 

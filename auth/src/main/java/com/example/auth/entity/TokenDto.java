@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class TokenDto {
-
     private String token;
 }

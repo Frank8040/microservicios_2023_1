@@ -26,7 +26,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public Producto guardar(Producto producto) {
-        Categoria categoria = categoriaRepository.findById(producto.getCategoria().getCategoriaId())
+        Categoria categoria = categoriaRepository.findById(producto.getCategoria().getId())
                 .orElse(null);
         if (categoria == null) {
             categoria = categoriaRepository.save(producto.getCategoria());
@@ -37,7 +37,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public Producto actualizar(Producto producto) {
-        Categoria categoria = categoriaRepository.findById(producto.getCategoria().getCategoriaId())
+        Categoria categoria = categoriaRepository.findById(producto.getCategoria().getId())
                 .orElse(null);
         if (categoria == null) {
             categoria = categoriaRepository.save(producto.getCategoria());

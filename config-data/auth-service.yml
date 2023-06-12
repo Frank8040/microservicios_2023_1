@@ -1,18 +1,26 @@
 server:
-    port: 7878
+  port: ${PORT:${SERVER_PORT:0}}
 spring:
-    jpa:
-        hibernate.ddl-auto: update
-        show-sql: true
-        generate-ddl: true
-    datasource:
-        driverClassName: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/auth
-        username: root
-        password:
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/auth
+    username: root
+    password:
 eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URI:http://localhost:8585/eureka}
-        
-    
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS

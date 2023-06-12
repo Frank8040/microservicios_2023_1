@@ -5,12 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthUserDto {
-
-    private String name;
+    private String userName;
     private String password;
 }
